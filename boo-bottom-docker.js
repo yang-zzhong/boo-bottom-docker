@@ -49,13 +49,13 @@ class BooBottomDocker extends PolymerElement {
     if (!this.scrollTarget) {
       this.scrollTarget = window;
     }
-    console.log('scrollTarget', this.scrollTarget);
     setTimeout(this.init.bind(this), 400);
   }
 
   init() {
     let rect = this.getBoundingClientRect(); 
-    this._oy = rect.y + this._scrollTop();
+    let offset = this.offset(this);
+    this._oy = offset.y; // rect.y + this._scrollTop();
     this._ow = rect.width;
     this._oldPosition = this.style.position;
     this._oldBottom = this.style.bottom;
@@ -91,6 +91,17 @@ class BooBottomDocker extends PolymerElement {
     } else {
       return this.scrollTarget.scrollTop;
     }
+  }
+
+  static get offset(node) {
+    let result = {x: 0, y: 0};
+    while(node != null) {
+      result.y += node.offsetTop;
+      result.x += node.offsetLeft;
+      node = node.offsetParent;
+    }
+
+    return result;
   }
 
   static get screenHeight() {
