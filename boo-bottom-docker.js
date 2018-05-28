@@ -36,6 +36,14 @@ class BooBottomDocker extends PolymerElement {
         value: false,
         notify: true
       },
+      noAutoInit: {
+        type: Boolean,
+        value: false
+      },
+      initAfter: {
+        type: Number,
+        value: 500
+      },
       contentHeight: Number,
       _ow: Number,
       _oy: Number,
@@ -49,26 +57,27 @@ class BooBottomDocker extends PolymerElement {
     if (!this.scrollTarget) {
       this.scrollTarget = window;
     }
-    setTimeout(this.init.bind(this), 400);
+    !this.noAutoInit && setTimeout(this.init.bind(this), this.initAfter);
   }
 
   init() {
+    this.raised = false;
     let rect = this.getBoundingClientRect(); 
-    let offset = this.offset(this);
-    this._oy = offset.y; // rect.y + this._scrollTop();
+    this._oy = rect.y + this._scrollTop();
     this._ow = rect.width;
     this._oldPosition = this.style.position;
     this._oldBottom = this.style.bottom;
     this._onScroll();
     this.style.width = this._ow + 'px';
     this.dispatchEvent( new CustomEvent('ready'));
+    this._onScroll();
   }
 
   _scrollTargetChanged(scrollTarget) {
     scrollTarget && scrollTarget.addEventListener("scroll", this._onScroll.bind(this));
   }
 
-  _onScroll(e) {
+  _onScroll() {
     if (!this.scrollTarget) {
       return;
     }
@@ -91,17 +100,6 @@ class BooBottomDocker extends PolymerElement {
     } else {
       return this.scrollTarget.scrollTop;
     }
-  }
-
-  static get offset(node) {
-    let result = {x: 0, y: 0};
-    while(node != null) {
-      result.y += node.offsetTop;
-      result.x += node.offsetLeft;
-      node = node.offsetParent;
-    }
-
-    return result;
   }
 
   static get screenHeight() {
