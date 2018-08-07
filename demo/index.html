@@ -39,12 +39,18 @@
       <demo-snippet>
         <template>
           <div class="before">向下滚动到底试试</div>
-          <boo-bottom-docker offset-y="30">
+          <boo-bottom-docker id="docker" offset-y="30">
             <div class="bottom-docker"></div>
           </boo-bottom-docker>
           <div class="after"></div>
         </template>
       </demo-snippet>
     </div>
+    <script>
+      window.addEventListener('resize', function() {
+        let docker = document.getElementById("docker");
+        docker.init();
+      });
+    </script>
   </body>
 </html>

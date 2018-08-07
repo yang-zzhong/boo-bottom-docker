@@ -13,12 +13,14 @@ class BooBottomDocker extends PolymerElement {
   static get template() {
     return html`
       <style>
-        :host([raised]) {
+        :host([raised]) #container {
           position: fixed;
           bottom: 0px;
         }
       </style>
-      <slot></slot>
+      <div id="container">
+        <slot></slot>
+      </div>
     `;
   }
 
@@ -52,8 +54,6 @@ class BooBottomDocker extends PolymerElement {
       contentHeight: Number,
       _ow: Number,
       _oy: Number,
-      _oldPosition: String,
-      _oldBottom: String,
     };
   }
 
@@ -71,9 +71,7 @@ class BooBottomDocker extends PolymerElement {
       let rect = this.getBoundingClientRect(); 
       this._oy = rect.y + this._scrollTop();
       this._ow = rect.width;
-      this._oldPosition = this.style.position;
-      this._oldBottom = this.style.bottom;
-      this.style.width = this._ow + 'px';
+      this.$.container.style.width = this._ow + 'px';
       this._onScroll();
       this.dispatchEvent( new CustomEvent('ready'));
     }.bind(this), 1);
@@ -90,12 +88,12 @@ class BooBottomDocker extends PolymerElement {
     let scrollTop = this._scrollTop();
     let ch = this.contentHeight;
     if (!ch) {
-      let rect = this.getBoundingClientRect(); 
+      let rect = this.$.container.getBoundingClientRect(); 
       ch = rect.height;
     }
     if (scrollTop + BooBottomDocker.screenHeight < this._oy + ch + this.offsetY) {
       this.raised = true;
-      this.style.bottom = this.offsetY + 'px';
+      this.$.container.style.bottom = this.offsetY + 'px';
     } else {
       this.raised = false;
     }
