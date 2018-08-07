@@ -13,9 +13,14 @@ class BooBottomDocker extends PolymerElement {
   static get template() {
     return html`
       <style>
+
+        #container {
+          @apply --boo-bottom-docker;
+        }
+
         :host([raised]) #container {
+          @apply --boo-bottom-docker-raised;
           position: fixed;
-          bottom: 0px;
         }
       </style>
       <div id="container">
