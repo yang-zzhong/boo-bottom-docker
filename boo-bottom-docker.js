@@ -36,6 +36,11 @@ class BooBottomDocker extends PolymerElement {
         value: false,
         notify: true
       },
+      offsetY: {
+        type: Number,
+        reflectToAttribute: true,
+        value: 0
+      },
       noAutoInit: {
         type: Boolean,
         value: false
@@ -62,15 +67,16 @@ class BooBottomDocker extends PolymerElement {
 
   init() {
     this.raised = false;
-    let rect = this.getBoundingClientRect(); 
-    this._oy = rect.y + this._scrollTop();
-    this._ow = rect.width;
-    this._oldPosition = this.style.position;
-    this._oldBottom = this.style.bottom;
-    this._onScroll();
-    this.style.width = this._ow + 'px';
-    this.dispatchEvent( new CustomEvent('ready'));
-    this._onScroll();
+    setTimeout(function() {
+      let rect = this.getBoundingClientRect(); 
+      this._oy = rect.y + this._scrollTop();
+      this._ow = rect.width;
+      this._oldPosition = this.style.position;
+      this._oldBottom = this.style.bottom;
+      this.style.width = this._ow + 'px';
+      this._onScroll();
+      this.dispatchEvent( new CustomEvent('ready'));
+    }.bind(this), 1);
   }
 
   _scrollTargetChanged(scrollTarget) {
@@ -87,19 +93,17 @@ class BooBottomDocker extends PolymerElement {
       let rect = this.getBoundingClientRect(); 
       ch = rect.height;
     }
-    if (scrollTop + BooBottomDocker.screenHeight < this._oy + ch) {
+    if (scrollTop + BooBottomDocker.screenHeight < this._oy + ch + this.offsetY) {
       this.raised = true;
+      this.style.bottom = this.offsetY + 'px';
     } else {
       this.raised = false;
     }
   }
 
   _scrollTop() {
-    if (this.scrollTarget == window) {
-      return document.documentElement.scrollTop;
-    } else {
-      return this.scrollTarget.scrollTop;
-    }
+    let el = document.scrollingElement || document.documentElement;
+    return el.scrollTop;
   }
 
   static get screenHeight() {
